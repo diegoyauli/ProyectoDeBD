@@ -1,7 +1,7 @@
 package Formularios;
 
-import Registro.RegistroRegion;
-import Registro.Region;
+import Registro.RegistroCodigoResiduo;
+import Registro.CodigoResiduo;
 import Validadores.ResiduosToxicosValidator;
 import Conexion.Conexion;
 import java.sql.Connection;
@@ -10,27 +10,27 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.KeyEvent;
 
-public class InformacionRegion extends javax.swing.JFrame {
-    private final RegistroRegion RP;
+public class InformacionCodigoResiduo extends javax.swing.JFrame {
+    private final RegistroCodigoResiduo RCR;
     private final ResiduosToxicosValidator validator;
     private final Connection con;
     
-    public InformacionRegion() {
+    public InformacionCodigoResiduo() {
         initComponents();
         con = Conexion.getConnection();
         validator = new ResiduosToxicosValidator(con);
-        RP = new RegistroRegion();
+        RCR = new RegistroCodigoResiduo();
         listar();
         this.setLocationRelativeTo(null);
     }
     
     private void listar() {
-        tblRegiones.setModel(RP.getDatos());
+        tblCodigos.setModel(RCR.getDatos());
     }
     
     private void limpiarCampos() {
         txtCodigo.setText("");
-        txtNombre.setText("");
+        txtDescripcion.setText("");
     }
 
     @SuppressWarnings("unchecked")
@@ -43,10 +43,11 @@ public class InformacionRegion extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         txtCodigo = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        txtNombre = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblRegiones = new javax.swing.JTable();
+        txtDescripcion = new javax.swing.JTextArea();
+        jLabel4 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblCodigos = new javax.swing.JTable();
         btnAdicionar = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
@@ -55,13 +56,13 @@ public class InformacionRegion extends javax.swing.JFrame {
         btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Gestión de Regiones");
+        setTitle("Gestión de Códigos de Residuos");
 
-        jPanel1.setBackground(new java.awt.Color(0, 102, 153));
+        jPanel1.setBackground(new java.awt.Color(153, 102, 0));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Gestión de Regiones");
+        jLabel1.setText("Gestión de Códigos de Residuos");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -80,7 +81,7 @@ public class InformacionRegion extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos de la Región"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos del Código de Residuo"));
 
         jLabel2.setText("Código:");
 
@@ -91,14 +92,16 @@ public class InformacionRegion extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Nombre:");
+        jLabel3.setText("Descripción:");
 
-        txtNombre.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtDescripcion.setColumns(20);
+        txtDescripcion.setRows(5);
+        txtDescripcion.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtNombreKeyTyped(evt);
+                txtDescripcionKeyTyped(evt);
             }
         });
+        jScrollPane1.setViewportView(txtDescripcion);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -108,11 +111,11 @@ public class InformacionRegion extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -123,16 +126,16 @@ public class InformacionRegion extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel4.setText("Regiones Registradas:");
+        jLabel4.setText("Códigos de Residuos Registrados:");
 
-        tblRegiones.setModel(new javax.swing.table.DefaultTableModel(
+        tblCodigos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -140,7 +143,7 @@ public class InformacionRegion extends javax.swing.JFrame {
                 {null, null}
             },
             new String [] {
-                "Código", "Nombre"
+                "Código", "Descripción"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -151,13 +154,13 @@ public class InformacionRegion extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tblRegiones.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tblRegiones.addMouseListener(new java.awt.event.MouseAdapter() {
+        tblCodigos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblCodigos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tblRegionesMouseClicked(evt);
+                tblCodigosMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tblRegiones);
+        jScrollPane2.setViewportView(tblCodigos);
 
         btnAdicionar.setBackground(new java.awt.Color(0, 153, 51));
         btnAdicionar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -228,7 +231,7 @@ public class InformacionRegion extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -248,7 +251,7 @@ public class InformacionRegion extends javax.swing.JFrame {
                 .addComponent(btnSalir)
                 .addContainerGap(20, Short.MAX_VALUE)
               )))
-            );
+        );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -258,7 +261,7 @@ public class InformacionRegion extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAdicionar)
@@ -275,34 +278,37 @@ public class InformacionRegion extends javax.swing.JFrame {
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
         try {
-            int regCod = Integer.parseInt(txtCodigo.getText());
-            String regNom = txtNombre.getText().trim();
+            String codigo = txtCodigo.getText().trim();
+            String descripcion = txtDescripcion.getText().trim();
             
             // Validaciones
-            if (!validator.validateRegion(regCod, regNom)) {
-                JOptionPane.showMessageDialog(this, "Datos de región inválidos", "Error", JOptionPane.ERROR_MESSAGE);
+            if (codigo.isEmpty() || codigo.length() > 10) {
+                JOptionPane.showMessageDialog(this, "Código inválido (1-10 caracteres)", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            if (descripcion.isEmpty() || descripcion.length() > 200) {
+                JOptionPane.showMessageDialog(this, "Descripción inválida (1-200 caracteres)", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
             // Verificar si el código ya existe
-            if (RP.existeRegion(regCod)) {
-                JOptionPane.showMessageDialog(this, "El código de región ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+            if (RCR.existeCodigoResiduo(codigo)) {
+                JOptionPane.showMessageDialog(this, "El código de residuo ya existe", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            Region nuevaRegion = new Region();
-            nuevaRegion.setRegCod(regCod);
-            nuevaRegion.setRegNom(regNom);
+            CodigoResiduo nuevo = new CodigoResiduo();
+            nuevo.setCodResCod(codigo);
+            nuevo.setCodResDesc(descripcion);
             
-            if (RP.create(nuevaRegion)) {
-                JOptionPane.showMessageDialog(this, "Región adicionada correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            if (RCR.create(nuevo)) {
+                JOptionPane.showMessageDialog(this, "Código de residuo adicionado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 listar();
                 limpiarCampos();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al adicionar la región", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al adicionar el código de residuo", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Código debe ser un número entero", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -310,28 +316,31 @@ public class InformacionRegion extends javax.swing.JFrame {
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         try {
-            int regCod = Integer.parseInt(txtCodigo.getText());
-            String regNom = txtNombre.getText().trim();
+            String codigo = txtCodigo.getText().trim();
+            String descripcion = txtDescripcion.getText().trim();
             
             // Validaciones
-            if (!validator.validateRegion(regCod, regNom)) {
-                JOptionPane.showMessageDialog(this, "Datos de región inválidos", "Error", JOptionPane.ERROR_MESSAGE);
+            if (codigo.isEmpty() || codigo.length() > 10) {
+                JOptionPane.showMessageDialog(this, "Código inválido (1-10 caracteres)", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            Region region = new Region();
-            region.setRegCod(regCod);
-            region.setRegNom(regNom);
+            if (descripcion.isEmpty() || descripcion.length() > 200) {
+                JOptionPane.showMessageDialog(this, "Descripción inválida (1-200 caracteres)", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             
-            if (RP.update(region)) {
-                JOptionPane.showMessageDialog(this, "Región modificada correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            CodigoResiduo actualizado = new CodigoResiduo();
+            actualizado.setCodResCod(codigo);
+            actualizado.setCodResDesc(descripcion);
+            
+            if (RCR.update(actualizado)) {
+                JOptionPane.showMessageDialog(this, "Código de residuo modificado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 listar();
                 limpiarCampos();
             } else {
-                JOptionPane.showMessageDialog(this, "Error al modificar la región", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al modificar el código de residuo", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Código debe ser un número entero", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -339,30 +348,33 @@ public class InformacionRegion extends javax.swing.JFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         try {
-            int regCod = Integer.parseInt(txtCodigo.getText());
+            String codigo = txtCodigo.getText().trim();
             
-            // Validar si la región está siendo utilizada
-            if (validator.isRegionReferenced(regCod)) {
-                JOptionPane.showMessageDialog(this, "No se puede eliminar: La región está siendo utilizada", "Error", JOptionPane.ERROR_MESSAGE);
+            if (codigo.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Seleccione un código primero", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Verificar si el código está siendo usado en residuos
+            if (validator.existsInTable("RESIDUO", "CodResCod", codigo)) {
+                JOptionPane.showMessageDialog(this, "No se puede eliminar: El código está siendo usado en residuos", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
             int confirm = JOptionPane.showConfirmDialog(this, 
-                    "¿Está seguro de eliminar esta región?", 
+                    "¿Está seguro de eliminar este código de residuo?", 
                     "Confirmar eliminación", 
                     JOptionPane.YES_NO_OPTION);
             
             if (confirm == JOptionPane.YES_OPTION) {
-                if (RP.delete(regCod)) {
-                    JOptionPane.showMessageDialog(this, "Región eliminada correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                if (RCR.delete(codigo)) {
+                    JOptionPane.showMessageDialog(this, "Código de residuo eliminado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                     listar();
                     limpiarCampos();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error al eliminar la región", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Error al eliminar el código de residuo", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Código debe ser un número entero", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error de base de datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
@@ -382,31 +394,31 @@ public class InformacionRegion extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
 
-    private void tblRegionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblRegionesMouseClicked
-        int fila = tblRegiones.getSelectedRow();
+    private void tblCodigosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCodigosMouseClicked
+        int fila = tblCodigos.getSelectedRow();
         if (fila >= 0) {
-            txtCodigo.setText(tblRegiones.getValueAt(fila, 0).toString());
-            txtNombre.setText(tblRegiones.getValueAt(fila, 1).toString());
+            txtCodigo.setText(tblCodigos.getValueAt(fila, 0).toString());
+            txtDescripcion.setText(tblCodigos.getValueAt(fila, 1).toString());
         }
-    }//GEN-LAST:event_tblRegionesMouseClicked
+    }//GEN-LAST:event_tblCodigosMouseClicked
 
     private void txtCodigoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoKeyTyped
-        char c = evt.getKeyChar();
-        if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+        String text = txtCodigo.getText();
+        if (text.length() >= 10) {
             evt.consume();
         }
     }//GEN-LAST:event_txtCodigoKeyTyped
 
-    private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
-        String text = txtNombre.getText();
-        if (text.length() >= 100) {
+    private void txtDescripcionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescripcionKeyTyped
+        String text = txtDescripcion.getText();
+        if (text.length() >= 200) {
             evt.consume();
         }
-    }//GEN-LAST:event_txtNombreKeyTyped
+    }//GEN-LAST:event_txtDescripcionKeyTyped
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
-            new InformacionRegion().setVisible(true);
+            new InformacionCodigoResiduo().setVisible(true);
         });
     }
 
@@ -424,8 +436,9 @@ public class InformacionRegion extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblRegiones;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tblCodigos;
     private javax.swing.JTextField txtCodigo;
-    private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextArea txtDescripcion;
     // End of variables declaration//GEN-END:variables
 }

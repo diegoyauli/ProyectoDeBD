@@ -1,10 +1,10 @@
 package ResiduosToxicos;
 
-import Formularios.InformacionRegion;
+import Formularios.InformacionConstituyente;
 
 public class Cls_Main {
     public static void main(String[] args){
-        InformacionRegion Inf = new InformacionRegion();
+        InformacionConstituyente Inf = new InformacionConstituyente();
         Inf.setVisible(true);
     }
 }

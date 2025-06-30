@@ -33,7 +33,7 @@ public class ResiduosToxicosValidator {
         return value != null && value.compareTo(BigDecimal.ZERO) > 0;
     }
 
-    private boolean existsInTable(String tableName, String columnName, Object value) throws SQLException {
+    public boolean existsInTable(String tableName, String columnName, Object value) throws SQLException {
         String sql = String.format("SELECT 1 FROM %s WHERE %s = ?", tableName, columnName);
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             if (value instanceof Integer) {
