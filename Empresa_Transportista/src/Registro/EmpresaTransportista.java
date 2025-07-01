@@ -9,6 +9,7 @@ public class EmpresaTransportista {
     private String trsDir;
     private BigDecimal trsCap;
     private int regCod;
+    private String estReg;
 
     public int getTrsEmpCod() {
         return trsEmpCod;
@@ -56,5 +57,13 @@ public class EmpresaTransportista {
 
     public void setRegCod(int regCod) {
         this.regCod = regCod;
+    }
+
+    public String getEstReg() {
+        return estReg;
+    }
+
+    public void setEstReg(String estReg) {
+        this.estReg = estReg;
     }
 }

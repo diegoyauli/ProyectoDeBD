@@ -9,6 +9,7 @@ public class Destino {
     private BigDecimal destCap;
     private BigDecimal destCapAct;
     private int regCod;
+    private String estReg;
 
     public int getDestCod() {
         return destCod;
@@ -56,5 +57,13 @@ public class Destino {
 
     public void setRegCod(int regCod) {
         this.regCod = regCod;
+    }
+
+    public String getEstReg() {
+        return estReg;
+    }
+
+    public void setEstReg(String estReg) {
+        this.estReg = estReg;
     }
 }

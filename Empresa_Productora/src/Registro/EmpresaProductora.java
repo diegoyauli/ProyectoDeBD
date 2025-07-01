@@ -7,6 +7,7 @@ public class EmpresaProductora {
     private String empDir;
     private String empAct;
     private int regCod;
+    private String estReg;
 
     public int getEmpCod() {
         return empCod;
@@ -54,5 +55,13 @@ public class EmpresaProductora {
 
     public void setRegCod(int regCod) {
         this.regCod = regCod;
+    }
+
+    public String getEstReg() {
+        return estReg;
+    }
+
+    public void setEstReg(String estReg) {
+        this.estReg = estReg;
     }
 }

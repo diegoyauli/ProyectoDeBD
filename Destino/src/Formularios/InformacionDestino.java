@@ -16,6 +16,9 @@ public class InformacionDestino extends javax.swing.JFrame {
     private final ResiduosToxicosValidator validator;
     private final Connection con;
     
+    private int CarFlaAct = 0; // Bandera de actualización (0: no actualizar, 1: actualizar)
+    private String currentOperation = ""; // Operación actual (ADD, MOD, DEL, INA, REA)
+    
     public InformacionDestino() {
         initComponents();
         con = Conexion.getConnection();
@@ -23,6 +26,9 @@ public class InformacionDestino extends javax.swing.JFrame {
         RD = new RegistroDestino();
         listar();
         this.setLocationRelativeTo(null);
+        txtEstado = new javax.swing.JTextField(); // Inicializar el campo de estado
+        txtEstado.setEditable(false); // El estado no es editable por el usuario
+        txtEstado.setText("A"); // Estado inicial: Activo
     }
     
     private void listar() {
@@ -36,6 +42,20 @@ public class InformacionDestino extends javax.swing.JFrame {
         txtCapacidad.setText("");
         txtCapacidadActual.setText("");
         txtRegion.setText("");
+        txtEstado.setText("A");
+        CarFlaAct = 0;
+        currentOperation = "";
+        habilitarCampos(false);
+    }
+    
+    private void habilitarCampos(boolean habilitar) {
+        txtCodigo.setEnabled(false); // Código siempre es generado automáticamente
+        txtNombre.setEditable(habilitar && !"DEL".equals(currentOperation) && !"INA".equals(currentOperation) && !"REA".equals(currentOperation));
+        txtDireccion.setEditable(habilitar && !"DEL".equals(currentOperation) && !"INA".equals(currentOperation) && !"REA".equals(currentOperation));
+        txtCapacidad.setEditable(habilitar && !"DEL".equals(currentOperation) && !"INA".equals(currentOperation) && !"REA".equals(currentOperation));
+        txtCapacidadActual.setEditable(habilitar && !"DEL".equals(currentOperation) && !"INA".equals(currentOperation) && !"REA".equals(currentOperation));
+        txtRegion.setEditable(habilitar && !"DEL".equals(currentOperation) && !"INA".equals(currentOperation) && !"REA".equals(currentOperation));
+        txtEstado.setEditable(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -67,6 +87,10 @@ public class InformacionDestino extends javax.swing.JFrame {
         btnCancelar = new javax.swing.JButton();
         btnActualizar = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        txtEstado = new javax.swing.JTextField();
+        btnInactivar = new javax.swing.JButton();
+        btnReactivar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Gestión de Destinos");
@@ -137,6 +161,33 @@ public class InformacionDestino extends javax.swing.JFrame {
             }
         });
 
+        jLabel9.setText("Estado:");
+
+        txtEstado.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtEstado.setText("A");
+        txtEstado.setEditable(false);
+
+        // Configurar botones de inactivar y reactivar
+        btnInactivar.setBackground(new java.awt.Color(255, 153, 0));
+        btnInactivar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnInactivar.setForeground(new java.awt.Color(255, 255, 255));
+        btnInactivar.setText("Inactivar");
+        btnInactivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInactivarActionPerformed(evt);
+            }
+        });
+
+        btnReactivar.setBackground(new java.awt.Color(0, 102, 102));
+        btnReactivar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnReactivar.setForeground(new java.awt.Color(255, 255, 255));
+        btnReactivar.setText("Reactivar");
+        btnReactivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReactivarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -158,12 +209,14 @@ public class InformacionDestino extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel6)
-                            .addComponent(jLabel7))
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel9)) // Agregar etiqueta de estado
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtCapacidad, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtCapacidadActual, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtRegion, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtRegion, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))) // Agregar campo de estado
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -186,6 +239,10 @@ public class InformacionDestino extends javax.swing.JFrame {
                     .addComponent(jLabel7)
                     .addComponent(txtRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9) // Etiqueta de estado
+                    .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)) // Campo de estado
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -198,11 +255,11 @@ public class InformacionDestino extends javax.swing.JFrame {
         tblDestinos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {},
             new String [] {
-                "Código", "Nombre", "Dirección", "Capacidad", "Cap. Actual", "Región"
+                "Código", "Nombre", "Dirección", "Capacidad", "Cap. Actual", "Región", "Estado"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -299,6 +356,10 @@ public class InformacionDestino extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEliminar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnInactivar) // Agregar botón Inactivar
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnReactivar) // Agregar botón Reactivar
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnActualizar)
@@ -306,6 +367,7 @@ public class InformacionDestino extends javax.swing.JFrame {
                 .addComponent(btnSalir)
                 .addContainerGap(20, Short.MAX_VALUE))
         );
+        
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -323,7 +385,9 @@ public class InformacionDestino extends javax.swing.JFrame {
                     .addComponent(btnEliminar)
                     .addComponent(btnCancelar)
                     .addComponent(btnActualizar)
-                    .addComponent(btnSalir))
+                    .addComponent(btnSalir)
+                    .addComponent(btnInactivar)
+                    .addComponent(btnReactivar))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -331,85 +395,11 @@ public class InformacionDestino extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
-        try {
-            String nombre = txtNombre.getText().trim();
-            String direccion = txtDireccion.getText().trim();
-            String capacidadStr = txtCapacidad.getText().trim();
-            String capacidadActualStr = txtCapacidadActual.getText().trim();
-            BigDecimal capacidad = null;
-            BigDecimal capacidadActual = null;
-            
-            if (nombre.isEmpty() || nombre.length() > 100) {
-                JOptionPane.showMessageDialog(this, "Nombre inválido (1-100 caracteres)", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            if (direccion.isEmpty() || direccion.length() > 250) {
-                JOptionPane.showMessageDialog(this, "Dirección inválida (1-250 caracteres)", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            if (!capacidadStr.isEmpty()) {
-                try {
-                    capacidad = new BigDecimal(capacidadStr);
-                    if (capacidad.compareTo(new BigDecimal("99999999.99")) > 0 || capacidad.compareTo(BigDecimal.ZERO) < 0) {
-                        JOptionPane.showMessageDialog(this, "Capacidad debe estar entre 0 y 99999999.99", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Capacidad debe ser un número válido", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            }
-            
-            if (!capacidadActualStr.isEmpty()) {
-                try {
-                    capacidadActual = new BigDecimal(capacidadActualStr);
-                    if (capacidadActual.compareTo(new BigDecimal("99999999.99")) > 0 || capacidadActual.compareTo(BigDecimal.ZERO) < 0) {
-                        JOptionPane.showMessageDialog(this, "Capacidad actual debe estar entre 0 y 99999999.99", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if (capacidad != null && capacidadActual.compareTo(capacidad) > 0) {
-                        JOptionPane.showMessageDialog(this, "Capacidad actual no puede ser mayor que la capacidad total", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Capacidad actual debe ser un número válido", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            }
-            
-            if (txtRegion.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Código de región es obligatorio", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            int regCod = Integer.parseInt(txtRegion.getText());
-            
-            if (!validator.existsInTable("REGION", "RegCod", regCod)) {
-                JOptionPane.showMessageDialog(this, "El código de región no existe", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            Destino nuevo = new Destino();
-            nuevo.setDestNom(nombre);
-            nuevo.setDestDir(direccion);
-            nuevo.setDestCap(capacidad);
-            nuevo.setDestCapAct(capacidadActual);
-            nuevo.setRegCod(regCod);
-            
-            if (RD.create(nuevo)) {
-                JOptionPane.showMessageDialog(this, "Destino adicionado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                listar();
-                limpiarCampos();
-            } else {
-                JOptionPane.showMessageDialog(this, "Error al adicionar el destino", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Código de región debe ser un número entero", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        limpiarCampos();
+        txtEstado.setText("A");
+        currentOperation = "ADD";
+        habilitarCampos(true);
+        CarFlaAct = 1;
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
@@ -462,6 +452,134 @@ public class InformacionDestino extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
 
+    private void btnInactivarActionPerformed(java.awt.event.ActionEvent evt) {
+        if (tblDestinos.getSelectedRow() >= 0) {
+            int fila = tblDestinos.getSelectedRow();
+            txtCodigo.setText(tblDestinos.getValueAt(fila, 0).toString());
+            txtNombre.setText(tblDestinos.getValueAt(fila, 1).toString());
+            txtDireccion.setText(tblDestinos.getValueAt(fila, 2).toString());
+            
+            if (tblDestinos.getValueAt(fila, 3) != null) {
+                txtCapacidad.setText(tblDestinos.getValueAt(fila, 3).toString());
+            } else {
+                txtCapacidad.setText("");
+            }
+            
+            if (tblDestinos.getValueAt(fila, 4) != null) {
+                txtCapacidadActual.setText(tblDestinos.getValueAt(fila, 4).toString());
+            } else {
+                txtCapacidadActual.setText("");
+            }
+            
+            txtRegion.setText(tblDestinos.getValueAt(fila, 5).toString());
+            
+            // Obtenemos el estado actual y verificamos que no esté ya inactivo
+            String estadoActual = tblDestinos.getValueAt(fila, 6).toString();
+            if ("I".equals(estadoActual)) {
+                JOptionPane.showMessageDialog(this, "El destino ya está inactivo", "Información", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            // Proteger todos los campos
+            habilitarCampos(false);
+            // Cambiar estado a inactivo (I)
+            txtEstado.setText("I");
+            
+            CarFlaAct = 1;
+            currentOperation = "INA";
+            
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                    "¿Está seguro de inactivar este destino?", 
+                    "Confirmar inactivación", 
+                    JOptionPane.YES_NO_OPTION);
+            
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    int codigo = Integer.parseInt(txtCodigo.getText());
+                    if (RD.updateEstado(codigo, "I")) {
+                        JOptionPane.showMessageDialog(this, "Destino inactivado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        listar();
+                        limpiarCampos();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Error al inactivar el destino", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Código inválido", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(this, "Error de base de datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                limpiarCampos();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Seleccione un destino primero", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void btnReactivarActionPerformed(java.awt.event.ActionEvent evt) {
+        if (tblDestinos.getSelectedRow() >= 0) {
+            int fila = tblDestinos.getSelectedRow();
+            txtCodigo.setText(tblDestinos.getValueAt(fila, 0).toString());
+            txtNombre.setText(tblDestinos.getValueAt(fila, 1).toString());
+            txtDireccion.setText(tblDestinos.getValueAt(fila, 2).toString());
+            
+            if (tblDestinos.getValueAt(fila, 3) != null) {
+                txtCapacidad.setText(tblDestinos.getValueAt(fila, 3).toString());
+            } else {
+                txtCapacidad.setText("");
+            }
+            
+            if (tblDestinos.getValueAt(fila, 4) != null) {
+                txtCapacidadActual.setText(tblDestinos.getValueAt(fila, 4).toString());
+            } else {
+                txtCapacidadActual.setText("");
+            }
+            
+            txtRegion.setText(tblDestinos.getValueAt(fila, 5).toString());
+            
+            // Obtenemos el estado actual y verificamos que no esté ya activo
+            String estadoActual = tblDestinos.getValueAt(fila, 6).toString();
+            if ("A".equals(estadoActual)) {
+                JOptionPane.showMessageDialog(this, "El destino ya está activo", "Información", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            // Proteger todos los campos
+            habilitarCampos(false);
+            // Cambiar estado a activo (A)
+            txtEstado.setText("A");
+            
+            CarFlaAct = 1;
+            currentOperation = "REA";
+            
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                    "¿Está seguro de reactivar este destino?", 
+                    "Confirmar reactivación", 
+                    JOptionPane.YES_NO_OPTION);
+            
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    int codigo = Integer.parseInt(txtCodigo.getText());
+                    if (RD.updateEstado(codigo, "A")) {
+                        JOptionPane.showMessageDialog(this, "Destino reactivado correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                        listar();
+                        limpiarCampos();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Error al reactivar el destino", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Código inválido", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(this, "Error de base de datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                limpiarCampos();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Seleccione un destino primero", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     private void tblDestinosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDestinosMouseClicked
         int fila = tblDestinos.getSelectedRow();
         if (fila >= 0) {
@@ -479,6 +597,7 @@ public class InformacionDestino extends javax.swing.JFrame {
                 txtCapacidadActual.setText("");
             }
             txtRegion.setText(tblDestinos.getValueAt(fila, 5).toString());
+            txtEstado.setText(tblDestinos.getValueAt(fila, 6).toString());
         }
     }//GEN-LAST:event_tblDestinosMouseClicked
 
@@ -556,7 +675,9 @@ public class InformacionDestino extends javax.swing.JFrame {
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnInactivar;
     private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnReactivar;
     private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -566,6 +687,7 @@ public class InformacionDestino extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -575,6 +697,7 @@ public class InformacionDestino extends javax.swing.JFrame {
     private javax.swing.JTextField txtCapacidadActual;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextArea txtDireccion;
+    private javax.swing.JTextField txtEstado;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtRegion;
     // End of variables declaration//GEN-END:variables

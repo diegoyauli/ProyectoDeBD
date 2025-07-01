@@ -16,7 +16,7 @@ public class RegistroDestino {
     }
 
     public boolean create(Destino destino) throws SQLException {
-        String sql = "INSERT INTO DESTINO (DestNom, DestDir, DestCap, DestCapAct, RegCod) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO DESTINO (DestNom, DestDir, DestCap, DestCapAct, RegCod, EstReg) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, destino.getDestNom());
             ps.setString(2, destino.getDestDir());
@@ -35,6 +35,9 @@ public class RegistroDestino {
             
             ps.setInt(5, destino.getRegCod());
             
+            // Establecer el estado (A: activo por defecto)
+            ps.setString(6, destino.getEstReg() != null ? destino.getEstReg() : "A");
+            
             int result = ps.executeUpdate();
             
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
@@ -48,7 +51,7 @@ public class RegistroDestino {
     }
 
     public DefaultTableModel getDatos() {
-        String[] columnas = {"Código", "Nombre", "Dirección", "Capacidad", "Cap. Actual", "Código Región"};
+        String[] columnas = {"Código", "Nombre", "Dirección", "Capacidad", "Cap. Actual", "Código Región", "Estado"};
         DefaultTableModel dtm = new DefaultTableModel(null, columnas) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -56,17 +59,18 @@ public class RegistroDestino {
             }
         };
         
-        String sql = "SELECT DestCod, DestNom, DestDir, DestCap, DestCapAct, RegCod FROM DESTINO ORDER BY DestCod";
+        String sql = "SELECT DestCod, DestNom, DestDir, DestCap, DestCapAct, RegCod, EstReg FROM DESTINO ORDER BY DestCod";
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Object[] fila = new Object[6];
+                Object[] fila = new Object[7];
                 fila[0] = rs.getInt("DestCod");
                 fila[1] = rs.getString("DestNom");
                 fila[2] = rs.getString("DestDir");
                 fila[3] = rs.getBigDecimal("DestCap");
                 fila[4] = rs.getBigDecimal("DestCapAct");
                 fila[5] = rs.getInt("RegCod");
+                fila[6] = rs.getString("EstReg");  // Agregar el estado
                 dtm.addRow(fila);
             }
         } catch (SQLException e) {
@@ -76,7 +80,7 @@ public class RegistroDestino {
     }
 
     public boolean update(Destino destino) throws SQLException {
-        String sql = "UPDATE DESTINO SET DestNom = ?, DestDir = ?, DestCap = ?, DestCapAct = ?, RegCod = ? WHERE DestCod = ?";
+        String sql = "UPDATE DESTINO SET DestNom = ?, DestDir = ?, DestCap = ?, DestCapAct = ?, RegCod = ?, EstReg = ? WHERE DestCod = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, destino.getDestNom());
             ps.setString(2, destino.getDestDir());
@@ -94,7 +98,17 @@ public class RegistroDestino {
             }
             
             ps.setInt(5, destino.getRegCod());
-            ps.setInt(6, destino.getDestCod());
+            ps.setString(6, destino.getEstReg());
+            ps.setInt(7, destino.getDestCod());
+            return ps.executeUpdate() > 0;
+        }
+    }
+    
+    public boolean updateEstado(int destCod, String estado) throws SQLException {
+        String sql = "UPDATE DESTINO SET EstReg = ? WHERE DestCod = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, estado);
+            ps.setInt(2, destCod);
             return ps.executeUpdate() > 0;
         }
     }

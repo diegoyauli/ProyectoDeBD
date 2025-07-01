@@ -16,7 +16,7 @@ public class RegistroEmpresaTransportista {
     }
 
     public boolean create(EmpresaTransportista empresa) throws SQLException {
-        String sql = "INSERT INTO EMPRESA_TRANSPORTISTA (TrsNom, TrsRUC, TrsDir, TrsCap, RegCod) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO EMPRESA_TRANSPORTISTA (TrsNom, TrsRUC, TrsDir, TrsCap, RegCod, EstReg) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, empresa.getTrsNom());
             ps.setString(2, empresa.getTrsRUC());
@@ -29,6 +29,9 @@ public class RegistroEmpresaTransportista {
             }
             
             ps.setInt(5, empresa.getRegCod());
+            
+            // Establecer el estado (A: activo por defecto)
+            ps.setString(6, empresa.getEstReg() != null ? empresa.getEstReg() : "A");
             
             int result = ps.executeUpdate();
             
@@ -43,7 +46,7 @@ public class RegistroEmpresaTransportista {
     }
 
     public DefaultTableModel getDatos() {
-        String[] columnas = {"Código", "Nombre", "RUC", "Dirección", "Capacidad", "Código Región"};
+        String[] columnas = {"Código", "Nombre", "RUC", "Dirección", "Capacidad", "Código Región", "Estado"};
         DefaultTableModel dtm = new DefaultTableModel(null, columnas) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -51,17 +54,18 @@ public class RegistroEmpresaTransportista {
             }
         };
         
-        String sql = "SELECT TrsEmpCod, TrsNom, TrsRUC, TrsDir, TrsCap, RegCod FROM EMPRESA_TRANSPORTISTA ORDER BY TrsEmpCod";
+        String sql = "SELECT TrsEmpCod, TrsNom, TrsRUC, TrsDir, TrsCap, RegCod, EstReg FROM EMPRESA_TRANSPORTISTA ORDER BY TrsEmpCod";
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Object[] fila = new Object[6];
+                Object[] fila = new Object[7];
                 fila[0] = rs.getInt("TrsEmpCod");
                 fila[1] = rs.getString("TrsNom");
                 fila[2] = rs.getString("TrsRUC");
                 fila[3] = rs.getString("TrsDir");
                 fila[4] = rs.getBigDecimal("TrsCap");
                 fila[5] = rs.getInt("RegCod");
+                fila[6] = rs.getString("EstReg");  // Agregar el estado
                 dtm.addRow(fila);
             }
         } catch (SQLException e) {
@@ -71,7 +75,7 @@ public class RegistroEmpresaTransportista {
     }
 
     public boolean update(EmpresaTransportista empresa) throws SQLException {
-        String sql = "UPDATE EMPRESA_TRANSPORTISTA SET TrsNom = ?, TrsRUC = ?, TrsDir = ?, TrsCap = ?, RegCod = ? WHERE TrsEmpCod = ?";
+        String sql = "UPDATE EMPRESA_TRANSPORTISTA SET TrsNom = ?, TrsRUC = ?, TrsDir = ?, TrsCap = ?, RegCod = ?, EstReg = ? WHERE TrsEmpCod = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, empresa.getTrsNom());
             ps.setString(2, empresa.getTrsRUC());
@@ -84,7 +88,17 @@ public class RegistroEmpresaTransportista {
             }
             
             ps.setInt(5, empresa.getRegCod());
-            ps.setInt(6, empresa.getTrsEmpCod());
+            ps.setString(6, empresa.getEstReg());
+            ps.setInt(7, empresa.getTrsEmpCod());
+            return ps.executeUpdate() > 0;
+        }
+    }
+    
+    public boolean updateEstado(int trsEmpCod, String estado) throws SQLException {
+        String sql = "UPDATE EMPRESA_TRANSPORTISTA SET EstReg = ? WHERE TrsEmpCod = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, estado);
+            ps.setInt(2, trsEmpCod);
             return ps.executeUpdate() > 0;
         }
     }
