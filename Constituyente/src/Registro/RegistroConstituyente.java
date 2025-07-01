@@ -20,50 +20,24 @@ public class RegistroConstituyente {
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, constituyente.getConNom());
             ps.setString(2, constituyente.getConDes());
-            
+
             if (constituyente.getConGrad() != null) {
                 ps.setByte(3, constituyente.getConGrad());
             } else {
                 ps.setNull(3, java.sql.Types.TINYINT);
             }
-            
+
             int result = ps.executeUpdate();
-            
+
             // Obtener el ID generado (aunque no lo estamos usando aquí)
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     constituyente.setConsCod(generatedKeys.getInt(1));
                 }
             }
-            
+
             return result > 0;
         }
-    }
-
-    public DefaultTableModel getDatos() {
-        String[] columnas = {"Código", "Nombre", "Descripción", "Grado"};
-        DefaultTableModel dtm = new DefaultTableModel(null, columnas) {
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return columnIndex == 0 ? Integer.class : String.class;
-            }
-        };
-        
-        String sql = "SELECT ConsCod, ConNom, ConDes, ConGrad FROM CONSTITUYENTE ORDER BY ConsCod";
-        try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Object[] fila = new Object[4];
-                fila[0] = rs.getInt("ConsCod");
-                fila[1] = rs.getString("ConNom");
-                fila[2] = rs.getString("ConDes");
-                fila[3] = rs.getObject("ConGrad");  // Puede ser null
-                dtm.addRow(fila);
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al listar constituyentes: " + e.getMessage());
-        }
-        return dtm;
     }
 
     public boolean update(Constituyente constituyente) throws SQLException {
@@ -71,13 +45,13 @@ public class RegistroConstituyente {
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, constituyente.getConNom());
             ps.setString(2, constituyente.getConDes());
-            
+
             if (constituyente.getConGrad() != null) {
                 ps.setByte(3, constituyente.getConGrad());
             } else {
                 ps.setNull(3, java.sql.Types.TINYINT);
             }
-            
+
             ps.setInt(4, constituyente.getConsCod());
             return ps.executeUpdate() > 0;
         }
@@ -89,5 +63,41 @@ public class RegistroConstituyente {
             ps.setInt(1, consCod);
             return ps.executeUpdate() > 0;
         }
+    }
+
+    public boolean updateEstado(int consCod, String estado) throws SQLException {
+        String sql = "UPDATE CONSTITUYENTE SET EstReg = ? WHERE ConsCod = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, estado);
+            ps.setInt(2, consCod);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public DefaultTableModel getDatos() {
+        String[] columnas = { "Código", "Nombre", "Descripción", "Grado", "Estado" };
+        DefaultTableModel dtm = new DefaultTableModel(null, columnas) {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 0 ? Integer.class : String.class;
+            }
+        };
+
+        String sql = "SELECT ConsCod, ConNom, ConDes, ConGrad, EstReg FROM CONSTITUYENTE ORDER BY ConsCod";
+        try (PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Object[] fila = new Object[5];
+                fila[0] = rs.getInt("ConsCod");
+                fila[1] = rs.getString("ConNom");
+                fila[2] = rs.getString("ConDes");
+                fila[3] = rs.getObject("ConGrad"); // Puede ser null
+                fila[4] = rs.getString("EstReg"); // Agregar el estado
+                dtm.addRow(fila);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al listar constituyentes: " + e.getMessage());
+        }
+        return dtm;
     }
 }
