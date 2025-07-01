@@ -15,24 +15,26 @@ public class RegistroCodigoResiduo {
     }
 
     public boolean create(CodigoResiduo codigoResiduo) throws SQLException {
-        String sql = "INSERT INTO CODIGO_RESIDUO (CodResCod, CodResDesc) VALUES (?, ?)";
+        String sql = "INSERT INTO CODIGO_RESIDUO (CodResCod, CodResDesc, CodResEstReg) VALUES (?, ?, ?)";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, codigoResiduo.getCodResCod());
             ps.setString(2, codigoResiduo.getCodResDesc());
+            ps.setString(3, codigoResiduo.getCodResEstReg());
             return ps.executeUpdate() > 0;
         }
     }
 
     public DefaultTableModel getDatos() {
-        String[] columnas = {"Código", "Descripción"};
+        String[] columnas = {"Código", "Descripción", "Estado"};
         DefaultTableModel dtm = new DefaultTableModel(null, columnas);
-        String sql = "SELECT CodResCod, CodResDesc FROM CODIGO_RESIDUO ORDER BY CodResCod";
+        String sql = "SELECT CodResCod, CodResDesc, CodResEstReg FROM CODIGO_RESIDUO ORDER BY CodResCod";
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Object[] fila = new Object[2];
+                Object[] fila = new Object[3];
                 fila[0] = rs.getString("CodResCod");
                 fila[1] = rs.getString("CodResDesc");
+                fila[2] = rs.getString("CodResEstReg");
                 dtm.addRow(fila);
             }
         } catch (SQLException e) {
@@ -49,15 +51,25 @@ public class RegistroCodigoResiduo {
             return ps.executeUpdate() > 0;
         }
     }
+    
+    public boolean updateEstado(String codResCod, String estado) throws SQLException {
+        String sql = "UPDATE CODIGO_RESIDUO SET CodResEstReg = ? WHERE CodResCod = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, estado);
+            ps.setString(2, codResCod);
+            return ps.executeUpdate() > 0;
+        }
+    }
 
     public boolean delete(String codResCod) throws SQLException {
-        String sql = "DELETE FROM CODIGO_RESIDUO WHERE CodResCod = ?";
+        // Eliminación lógica (marcar como eliminado)
+        String sql = "UPDATE CODIGO_RESIDUO SET CodResEstReg = '*' WHERE CodResCod = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, codResCod);
             return ps.executeUpdate() > 0;
         }
     }
-    
+
     public boolean existeCodigoResiduo(String codResCod) throws SQLException {
         String sql = "SELECT 1 FROM CODIGO_RESIDUO WHERE CodResCod = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -67,4 +79,4 @@ public class RegistroCodigoResiduo {
             }
         }
     }
-}
+}  
