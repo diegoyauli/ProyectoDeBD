@@ -1,0 +1,3 @@
+manifest-version: 1.0
+x-comment: main-class will be added automatically by build
+class-path: lib/postgresql-jdbc.jar
